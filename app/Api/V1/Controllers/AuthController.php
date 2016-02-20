@@ -27,7 +27,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             throw new ValidationHttpException($validator->errors()->all());
         }
 
@@ -51,7 +51,7 @@ class AuthController extends Controller
 
         $validator = Validator::make($userData, Config::get('boilerplate.signup_fields_rules'));
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             throw new ValidationHttpException($validator->errors()->all());
         }
 
@@ -59,11 +59,11 @@ class AuthController extends Controller
         $user = User::create($userData);
         User::reguard();
 
-        if(!$user->id) {
+        if (!$user->id) {
             return $this->response->error('could_not_create_user', 500);
         }
 
-        if($hasToReleaseToken) {
+        if ($hasToReleaseToken) {
             return $this->login($request);
         }
         
@@ -76,7 +76,7 @@ class AuthController extends Controller
             'email' => 'required'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             throw new ValidationHttpException($validator->errors()->all());
         }
 
@@ -95,7 +95,10 @@ class AuthController extends Controller
     public function reset(Request $request)
     {
         $credentials = $request->only(
-            'email', 'password', 'password_confirmation', 'token'
+            'email',
+            'password',
+            'password_confirmation',
+            'token'
         );
 
         $validator = Validator::make($credentials, [
@@ -104,7 +107,7 @@ class AuthController extends Controller
             'password' => 'required|confirmed|min:6',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             throw new ValidationHttpException($validator->errors()->all());
         }
         
@@ -115,7 +118,7 @@ class AuthController extends Controller
 
         switch ($response) {
             case Password::PASSWORD_RESET:
-                if(Config::get('boilerplate.reset_token_release')) {
+                if (Config::get('boilerplate.reset_token_release')) {
                     return $this->login($request);
                 }
                 return $this->response->noContent();
